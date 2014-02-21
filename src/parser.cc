@@ -249,6 +249,12 @@ namespace jrl
 	linkREPNames_[link] = repName;
       }
 
+      void
+      Parser::ignoreJoint(const std::string & link)
+      {
+        ignoredLink_.insert(link);
+      }
+
       boost::shared_ptr< ::urdf::ModelInterface>
       Parser::urdfModel () const
       {
@@ -422,6 +428,11 @@ namespace jrl
 		|| joint->type == ::urdf::Joint::PRISMATIC)
 	      position = position * normalizeFrameOrientation (joint);
 
+	    if (ignoredLink_.find(it->first) != ignoredLink_.end())
+	    {
+		makeJointAnchor (jointsMap_, position, it->first, factory_);
+	    }
+	    else
 	    switch(it->second->type)
 	      {
 	      case ::urdf::Joint::UNKNOWN:
@@ -475,7 +486,9 @@ namespace jrl
 	      throw std::runtime_error ("null joint shared pointer");
 	    if (it->second->type == ::urdf::Joint::UNKNOWN
 		|| it->second->type == ::urdf::Joint::FLOATING
-		|| it->second->type == ::urdf::Joint::FIXED)
+		|| it->second->type == ::urdf::Joint::FIXED
+		|| (ignoredLink_.find(it->first) != ignoredLink_.end())
+		)
 	      continue;
 	    MapJrlJoint::const_iterator child = jointsMap_.find (it->first);
 	    if (child == jointsMap_.end () || !child->second)

@@ -18,6 +18,7 @@
 # define JRL_DYNAMICS_URDF_PARSER
 # include <string>
 # include <map>
+# include <set>
 
 # include <boost/shared_ptr.hpp>
 
@@ -116,6 +117,10 @@ namespace jrl
 	///  between parser internal specifications and actual robot names
 	void specifyREPName(const std::string &link,
 			    const std::string &repName);
+
+	/// \brief Add the possibility the fix some joints.
+	void ignoreJoint(const std::string &link);
+
       protected:
 	/// \brief Find special joints using REP 120.
 	///
@@ -193,6 +198,7 @@ namespace jrl
 	std::string gazeJointName_;
 	/// \}
 	std::map<std::string, std::string> linkREPNames_;
+	std::set<std::string> ignoredLink_;
 	void initREPNames();
 
       }; // class Parser
