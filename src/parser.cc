@@ -219,7 +219,8 @@ namespace jrl
             leftFootJointName_ (),
             rightFootJointName_ (),
             gazeJointName_ (),
-            linkREPNames_()
+            linkREPNames_(),
+            ignoredLink_()
       {
 	initREPNames();
       }
