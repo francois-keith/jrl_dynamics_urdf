@@ -4,3 +4,6 @@
 [submodule "tests/urdf_test_suite"]
 	path = tests/urdf_test_suite
 	url = git://github.com/laas/urdf_test_suite.git
+[submodule ".travis"]
+	path = .travis
+	url = git://github.com/jrl-umi3218/jrl-travis

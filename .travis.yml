@@ -1,0 +1,31 @@
+language: cpp
+compiler:
+  - gcc
+  - clang
+env:
+  global:
+    - APT_DEPENDENCIES="doxygen doxygen-latex libboost-all-dev libeigen3-dev liblapack-dev libblas-dev gfortran
+      ros-hydro-urdfdom ros-hydro-urdfdom-headers ros-hydro-roscpp ros-hydro-resource-retriever"
+    - GIT_DEPENDENCIES="jrl-umi3218/jrl-mathtools jrl-umi3218/jrl-mal laas/abstract-robot-dynamics jrl-umi3218/jrl-dynamics"
+    - GH_REPO=laas/jrl_dynamics_urdf
+    - LCOV_IGNORE_RULES="*tests*"
+notifications:
+  email:
+  - hpp-source@laas.fr
+branches:
+  only:
+  - master
+before_install:
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
+  - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+  - sudo pip install cpp-coveralls --use-mirrors
+  - ./.travis/run  before_install
+  - source /opt/ros/hydro/setup.bash
+script: ./.travis/run build
+after_success: ./.travis/run after_success
+after_failure: ./.travis/run after_failure
+matrix:
+  allow_failures:
+    - compiler: clang
+os:
+  - linux
