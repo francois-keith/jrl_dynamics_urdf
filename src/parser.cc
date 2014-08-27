@@ -424,16 +424,15 @@ namespace jrl
 
 	    // Normalize orientation if this is a rotation joint.
 	    UrdfJointConstPtrType joint = model_->getJoint (it->first);
-	    if (joint->type == ::urdf::Joint::REVOLUTE
-		|| joint->type == ::urdf::Joint::CONTINUOUS
-		|| joint->type == ::urdf::Joint::PRISMATIC)
-	      position = position * normalizeFrameOrientation (joint);
-
 	    if (ignoredLink_.find(it->first) != ignoredLink_.end())
 	    {
 		makeJointAnchor (jointsMap_, position, it->first, factory_);
 	    }
-	    else
+	    else if (joint->type == ::urdf::Joint::REVOLUTE
+		|| joint->type == ::urdf::Joint::CONTINUOUS
+		|| joint->type == ::urdf::Joint::PRISMATIC)
+	      position = position * normalizeFrameOrientation (joint);
+
 	    switch(it->second->type)
 	      {
 	      case ::urdf::Joint::UNKNOWN:
@@ -473,23 +472,24 @@ namespace jrl
 	  }
       }
 
-      void createJointList(std::vector<CjrlJoint*> &jointsVect, CjrlJoint* joint)
+      void createJointList(std::vector<CjrlJoint*> &jointsVect, CjrlJoint* joint,
+        const std::set<std::string> & ignoredLink)
       {
         //If the joint is not fixed nor a free flier nor ignored joint
         // take the joint
         if(joint->numberDof() != 0 && joint->numberDof() != 6
-           && (ignoredLink_.find(it->first) != ignoredLink_.end())
+           && (ignoredLink.find(joint->getName()) != ignoredLink.end()))
           jointsVect.push_back(joint);
 
         // parse the childs
         for(unsigned i=0; i<joint->countChildJoints(); ++i)
-          createJointList(jointsVect, joint->childJoint(i));
+          createJointList(jointsVect, joint->childJoint(i), ignoredLink);
       }
 
       std::vector<CjrlJoint*> Parser::actuatedJoints ()
       {
 	std::vector<CjrlJoint*> jointsVect;
-	createJointList(jointsVect, rootJoint_);
+	createJointList(jointsVect, rootJoint_, ignoredLink_);
 
 	return jointsVect;
       }

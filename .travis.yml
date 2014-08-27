@@ -11,10 +11,11 @@ env:
     - LCOV_IGNORE_RULES="*tests*"
 notifications:
   email:
-  - hpp-source@laas.fr
+  - francois.keith@gmail.com
 branches:
   only:
   - master
+  - topic/fixed_joints
 before_install:
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
